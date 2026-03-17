@@ -11,10 +11,15 @@ const audioFiles = {
 
 const MAX_STEPS = 20;
 
-const ctx = new (window.AudioContext || window.webkitAudioContext)();
-const gainNode = ctx.createGain();
-gainNode.gain.value = 0.8;
-gainNode.connect(ctx.destination);
+let ctx, gainNode;
+
+function initAudio() {
+  if (ctx) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  gainNode = ctx.createGain();
+  gainNode.gain.value = volumeSlider.value;
+  gainNode.connect(ctx.destination);
+}
 
 const buffers = {};
 
@@ -137,8 +142,16 @@ function tick() {
   timer = setTimeout(tick, duration);
 }
 
+let audioReady = false;
+
 async function toggle() {
+  initAudio();
   if (ctx.state === "suspended") await ctx.resume();
+
+  if (!audioReady) {
+    await preload();
+    audioReady = true;
+  }
 
   if (timer) {
     clearTimeout(timer);
@@ -176,7 +189,6 @@ window.addEventListener("keydown", (e) => {
 });
 
 window.addEventListener("load", async () => {
-  await preload();
   updateActiveSteps();
   initNameButtons();
   syncBPM();
