@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sequencer</title>
+        <meta
+            name="description"
+            content="A minimal, responsive drum sequencer for the browser. Built with vanilla JS and the Web Audio API."
+        />
+        <meta name="author" content="Antonio Pelusi" />
+        <link
+            rel="icon"
+            type="image/png"
+            href="./assets/icons/favicon/favicon-96x96.png"
+            sizes="96x96"
+        />
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="./assets/icons/favicon/favicon.svg"
+        />
+        <link rel="shortcut icon" href="./assets/icons/favicon/favicon.ico" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="./assets/icons/favicon/apple-touch-icon.png"
+        />
+        <link rel="manifest" href="./assets/icons/favicon/site.webmanifest" />
+        <meta name="apple-mobile-web-app-title" content="Sequencer" />
+        <link rel="stylesheet" href="./assets/css/main.css" />
+        <script src="./assets/js/main.js" defer></script>
+    </head>
+    <body>
+        <main role="main">
+            <div id="controls" class="hidden">
+                <label>
+                    Time Signature
+                    <select id="timeSignature">
+                        <option value="3">3/4</option>
+                        <option value="4" selected>4/4</option>
+                        <option value="5">5/4</option>
+                    </select>
+                </label>
+                <div class="label">
+                    <span>BPM</span>
+                    <div class="bpm-controls">
+                        <button id="bpmDown" class="bpm-step" tabindex="-1">
+                            −
+                        </button>
+                        <input
+                            id="bpm"
+                            type="number"
+                            value="110"
+                            min="40"
+                            max="240"
+                            readonly
+                        />
+                        <button id="bpmUp" class="bpm-step" tabindex="-1">
+                            +
+                        </button>
+                        <input
+                            id="bpmSlider"
+                            type="range"
+                            value="110"
+                            min="40"
+                            max="240"
+                        />
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button id="clear">Clear</button>
+                    <button id="play">Play</button>
+                </div>
+            </div>
+
+            <div id="sequencer" class="hidden">
+                <div id="beat-bar">
+                    <div></div>
+                    <div data-step="0"></div>
+                    <div data-step="1"></div>
+                    <div data-step="2"></div>
+                    <div data-step="3"></div>
+                    <div data-step="4"></div>
+                    <div data-step="5"></div>
+                    <div data-step="6"></div>
+                    <div data-step="7"></div>
+                    <div data-step="8"></div>
+                    <div data-step="9"></div>
+                    <div data-step="10"></div>
+                    <div data-step="11"></div>
+                    <div data-step="12"></div>
+                    <div data-step="13"></div>
+                    <div data-step="14"></div>
+                    <div data-step="15"></div>
+                    <div data-step="16"></div>
+                    <div data-step="17"></div>
+                    <div data-step="18"></div>
+                    <div data-step="19"></div>
+                </div>
+
+                <div class="row" data-instrument="kick">
+                    <button class="name-btn">Kick</button>
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="0"
+                        data-beat="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="4"
+                        data-beat="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="6"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="7"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="8"
+                        data-beat="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="9"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="10"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="11"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="12"
+                        data-beat="4"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="13"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="14"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="15"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="16"
+                        data-beat="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="17"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="18"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="kick"
+                        data-step="19"
+                    />
+                </div>
+
+                <div class="row" data-instrument="snare">
+                    <button class="name-btn">Snare</button>
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="0"
+                        data-beat="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="4"
+                        data-beat="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="6"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="7"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="8"
+                        data-beat="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="9"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="10"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="11"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="12"
+                        data-beat="4"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="13"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="14"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="15"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="16"
+                        data-beat="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="17"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="18"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="snare"
+                        data-step="19"
+                    />
+                </div>
+
+                <div class="row" data-instrument="hihat">
+                    <button class="name-btn">Hi-Hat</button>
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="0"
+                        data-beat="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="4"
+                        data-beat="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="6"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="7"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="8"
+                        data-beat="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="9"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="10"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="11"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="12"
+                        data-beat="4"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="13"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="14"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="15"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="16"
+                        data-beat="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="17"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="18"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat"
+                        data-step="19"
+                    />
+                </div>
+
+                <div class="row" data-instrument="hihat foot">
+                    <button class="name-btn">HH Foot</button>
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="0"
+                        data-beat="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="4"
+                        data-beat="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="6"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="7"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="8"
+                        data-beat="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="9"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="10"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="11"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="12"
+                        data-beat="4"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="13"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="14"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="15"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="16"
+                        data-beat="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="17"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="18"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="hihat foot"
+                        data-step="19"
+                    />
+                </div>
+
+                <div class="row" data-instrument="tom">
+                    <button class="name-btn">Tom</button>
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="0"
+                        data-beat="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="4"
+                        data-beat="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="6"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="7"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="8"
+                        data-beat="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="9"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="10"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="11"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="12"
+                        data-beat="4"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="13"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="14"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="15"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="16"
+                        data-beat="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="17"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="18"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="tom"
+                        data-step="19"
+                    />
+                </div>
+
+                <div class="row" data-instrument="floor tom">
+                    <button class="name-btn">Fl. Tom</button>
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="0"
+                        data-beat="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="4"
+                        data-beat="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="6"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="7"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="8"
+                        data-beat="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="9"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="10"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="11"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="12"
+                        data-beat="4"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="13"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="14"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="15"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="16"
+                        data-beat="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="17"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="18"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="floor tom"
+                        data-step="19"
+                    />
+                </div>
+
+                <div class="row" data-instrument="ride">
+                    <button class="name-btn">Ride</button>
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="0"
+                        data-beat="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="4"
+                        data-beat="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="6"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="7"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="8"
+                        data-beat="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="9"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="10"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="11"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="12"
+                        data-beat="4"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="13"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="14"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="15"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="16"
+                        data-beat="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="17"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="18"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="ride"
+                        data-step="19"
+                    />
+                </div>
+
+                <div class="row" data-instrument="perc">
+                    <button class="name-btn">Perc</button>
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="0"
+                        data-beat="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="1"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="4"
+                        data-beat="2"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="6"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="7"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="8"
+                        data-beat="3"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="9"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="10"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="11"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="12"
+                        data-beat="4"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="13"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="14"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="15"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="16"
+                        data-beat="5"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="17"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="18"
+                    />
+                    <input
+                        type="checkbox"
+                        data-instrument="perc"
+                        data-step="19"
+                    />
+                </div>
+            </div>
+
+            <footer>
+                <p>© <a href="/">Antonio Pelusi</a>. All rights reserved.</p>
+                <div class="volume">
+                    <label for="volume">
+                        Vol
+                        <input
+                            id="volume"
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value="0.8"
+                        />
+                    </label>
+                </div>
+            </footer>
+        </main>
+    </body>
+</html>
