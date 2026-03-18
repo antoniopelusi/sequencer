@@ -137,7 +137,6 @@ function clearAll() {
   if (timer) {
     clearTimeout(timer);
     timer = null;
-    playBtn.textContent = "Play";
     playBtn.classList.remove("active");
     playBtn.innerHTML = '<img src="./assets/icons/play.svg" alt="Play" />';
     highlight(-1);
@@ -201,7 +200,6 @@ async function toggle() {
   if (timer) {
     clearTimeout(timer);
     timer = null;
-    playBtn.textContent = "Play";
     playBtn.classList.remove("active");
     playBtn.innerHTML = '<img src="./assets/icons/play.svg" alt="Play" />';
     highlight(-1);
@@ -210,7 +208,6 @@ async function toggle() {
 
   currentStep = 0;
   tick();
-  playBtn.textContent = "Pause";
   playBtn.classList.add("active");
   playBtn.innerHTML = '<img src="./assets/icons/pause.svg" alt="Pause" />';
 }
@@ -222,7 +219,6 @@ timeSelect.addEventListener("change", () => {
   if (timer) {
     clearTimeout(timer);
     timer = null;
-    playBtn.textContent = "Play";
     playBtn.classList.remove("active");
     playBtn.innerHTML = '<img src="./assets/icons/play.svg" alt="Play" />';
   }

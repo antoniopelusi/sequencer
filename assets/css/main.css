@@ -26,15 +26,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family:
-        "Roboto Local",
-        -apple-system,
-        BlinkMacSystemFont,
-        sans-serif;
-    font-feature-settings:
-        "liga" 0,
-        "clig" 0,
-        "kern" 0;
+    font-family: "Roboto Local";
 }
 
 :root {
@@ -113,14 +105,16 @@ main {
     }
 }
 
-/* ── Controls ── */
-
 #controls {
     display: flex;
     flex-wrap: nowrap;
     align-items: flex-end;
     gap: var(--gap-s);
     font-weight: 700;
+}
+
+#play.active {
+    background-color: var(--surface-hi);
 }
 
 .label {
@@ -258,19 +252,19 @@ button img {
     flex-shrink: 0;
 }
 
-/* ── Sequencer ── */
-
 #sequencer {
     display: flex;
     flex-direction: column;
     gap: var(--gap-xs);
     width: 100%;
+    overflow-x: scroll;
+    touch-action: pan-x;
 }
 
 #beat-bar,
 .row {
     display: grid;
-    grid-template-columns: repeat(21, 1fr);
+    grid-template-columns: repeat(21, minmax(40px, 1fr));
     gap: var(--gap-xs);
     width: 100%;
 }
@@ -301,19 +295,16 @@ button img {
         0 0 14px color-mix(in srgb, var(--text-hi) 40%, transparent);
 }
 
-/* Name button */
-
 .name-btn {
     height: 100%;
     width: 100%;
-    min-width: 0;
+    min-width: 40px;
     padding: 0 var(--gap-xs);
     font-size: var(--f-xs);
     font-weight: 700;
     letter-spacing: 0.04em;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     border: 1px solid var(--border);
     border-left: 4px solid var(--border-hi);
     border-radius: var(--r);
@@ -331,8 +322,6 @@ button img {
     width: clamp(1rem, 2.5vw, 1.4rem);
     height: clamp(1rem, 2.5vw, 1.4rem);
 }
-
-/* Checkboxes */
 
 #sequencer input[type="checkbox"] {
     appearance: none;
@@ -402,8 +391,6 @@ button img {
     box-shadow: 0 0 8px color-mix(in srgb, var(--text-hi) 50%, transparent);
 }
 
-/* ── Footer ── */
-
 footer {
     margin-top: auto;
     font-size: var(--f-xs);
@@ -472,6 +459,7 @@ footer a {
         border-color: var(--border-hi);
         color: var(--text);
     }
+
     button:hover {
         background: var(--surface-hi);
         border-color: var(--border-hi);
