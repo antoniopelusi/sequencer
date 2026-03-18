@@ -27,6 +27,7 @@
     margin: 0;
     padding: 0;
     font-family: "Roboto Local";
+    /*outline: 1px solid orangered;*/
 }
 
 :root {
@@ -257,7 +258,8 @@ button img {
     flex-direction: column;
     gap: var(--gap-xs);
     width: 100%;
-    overflow-x: scroll;
+    min-width: 0;
+    overflow-x: auto;
     touch-action: pan-x;
 }
 
@@ -266,7 +268,9 @@ button img {
     display: grid;
     grid-template-columns: repeat(21, minmax(40px, 1fr));
     gap: var(--gap-xs);
-    width: 100%;
+    min-width: 100%;
+    width: max-content;
+    overflow: hidden;
 }
 
 .row {
@@ -302,7 +306,6 @@ button img {
     padding: 0 var(--gap-xs);
     font-size: var(--f-xs);
     font-weight: 700;
-    letter-spacing: 0.04em;
     white-space: nowrap;
     overflow: hidden;
     border: 1px solid var(--border);
