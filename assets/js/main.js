@@ -175,22 +175,57 @@ function initCheckboxPreview() {
     cb.addEventListener("change", async () => {
       if (!cb.checked) return;
       await ensureAudio();
-      if (buffers[cb.dataset.instrument]) play(cb.dataset.instrument);
+
+      if (cb.dataset.instrument === "perc") {
+        const checkedPercs = [
+          ...sequencer.querySelectorAll(
+            'input[data-instrument="perc"]:checked:not(:disabled)',
+          ),
+        ];
+        const minStep = Math.min(
+          ...checkedPercs.map((el) => parseInt(el.dataset.step)),
+        );
+        playPerc(parseInt(cb.dataset.step) === minStep);
+      } else if (buffers[cb.dataset.instrument]) {
+        play(cb.dataset.instrument);
+      }
     });
   });
 }
 
+function playPerc(isAccent) {
+  const source = ctx.createBufferSource();
+  source.buffer = buffers["perc"];
+  source.playbackRate.value = isAccent ? 1.4 : 1.0;
+  source.connect(gainNode);
+  source.start();
+}
+
+function getFirstPercStep() {
+  const first = sequencer.querySelector(
+    'input[type="checkbox"][data-instrument="perc"]:checked:not(:disabled)',
+  );
+  return first ? parseInt(first.dataset.step) : -1;
+}
+
 function tick() {
-  const duration = (60 / Number(bpmInput.textContent) / 2) * 1000;
+  const duration = (60 / Number(bpmInput.textContent) / 4) * 1000;
 
   highlight(currentStep);
 
+  const firstPercStep = getFirstPercStep();
+
   sequencer
     .querySelectorAll(`[data-step="${currentStep}"]:checked:not(:disabled)`)
-    .forEach((el) => play(el.dataset.instrument));
+    .forEach((el) => {
+      if (el.dataset.instrument === "perc") {
+        playPerc(currentStep === firstPercStep);
+      } else {
+        play(el.dataset.instrument);
+      }
+    });
 
   currentStep = (currentStep + 1) % activeSteps;
-
   timer = setTimeout(tick, duration);
 }
 
