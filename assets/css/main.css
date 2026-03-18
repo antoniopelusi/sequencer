@@ -4,23 +4,22 @@
     font-weight: 300;
     font-style: normal;
     font-display: block;
-    unicode-range: U+0020-007F;
 }
+
 @font-face {
     font-family: "Roboto Local";
     src: url("../fonts/Roboto-Regular.woff2") format("woff2");
     font-weight: 400;
     font-style: normal;
     font-display: block;
-    unicode-range: U+00A9, U+0020-007F;
 }
+
 @font-face {
     font-family: "Roboto Local";
     src: url("../fonts/Roboto-Bold.woff2") format("woff2");
     font-weight: 700;
     font-style: normal;
     font-display: block;
-    unicode-range: U+0020-007F;
 }
 
 * {
@@ -34,11 +33,13 @@
         sans-serif;
     font-feature-settings:
         "liga" 0,
+        "clig" 0,
         "kern" 0;
 }
 
 :root {
     --bg: #111828;
+    --bg-hi: #151d2e;
     --surface: #18202f;
     --surface-hi: #1e2840;
     --text: #a2afc1;
@@ -60,7 +61,7 @@
     --f-xs: clamp(0.65rem, 1vw, 0.75rem);
     --f-s: clamp(0.72rem, 1.1vw, 0.82rem);
     --f-m: clamp(0.8rem, 1.3vw, 0.9rem);
-    --f-l: clamp(0.9rem, 1.5vw, 1.05rem);
+    --f-l: clamp(0.85rem, 1.4vw, 1rem);
 
     --r: 4px;
     --transition: 0.18s ease;
@@ -119,24 +120,20 @@ main {
     flex-wrap: nowrap;
     align-items: flex-end;
     gap: var(--gap-s);
+    font-weight: 700;
 }
 
-label,
 .label {
     display: flex;
     flex-direction: column;
     gap: var(--gap-xs);
     font-size: var(--f-xs);
-    font-weight: 400;
     color: var(--text-lo);
     letter-spacing: 0.04em;
     flex-shrink: 1;
     min-width: 0;
 }
 
-label:has(#timeSignature) {
-    min-width: clamp(3.5rem, 7vw, 5rem);
-}
 .label:has(.bpm-controls) {
     min-width: clamp(7rem, 18vw, 12rem);
     flex: 1;
@@ -145,34 +142,32 @@ label:has(#timeSignature) {
 .bpm-controls {
     display: flex;
     align-items: center;
-    gap: var(--gap-s);
-    background: var(--surface);
+    gap: var(--gap-xs);
+    background: va(--surface);
     border: 1px solid var(--border);
     border-radius: var(--r);
     padding: 0 var(--gap-s);
     height: var(--control-h);
+    font-weight: 700;
 }
 
 #bpm {
-    min-width: clamp(2.5rem, 5vw, 3.2rem);
+    min-width: clamp(1.5rem, 3vw, 2rem);
     flex-shrink: 0;
-    border: none;
-    padding: 0;
-    background: transparent;
-    color: var(--text-hi);
+    color: var(--text);
     font-size: var(--f-l);
-    font-weight: 400;
+    font-weight: 700;
     text-align: center;
-    pointer-events: none;
     user-select: none;
+    padding-left: var(--gap-s);
 }
 
-#bpm::-webkit-inner-spin-button,
-#bpm::-webkit-outer-spin-button {
-    appearance: none;
-}
-#bpm {
-    -moz-appearance: textfield;
+.bpm-unit {
+    color: var(--text);
+    font-size: var(--f);
+    font-weight: 400;
+    flex-shrink: 0;
+    padding-right: var(--gap-s);
 }
 
 .bpm-step {
@@ -181,10 +176,10 @@ label:has(#timeSignature) {
     padding: 0;
     border: 1px solid var(--border);
     border-radius: calc(var(--r) - 1px);
-    background: transparent;
+    background: var(--bg-hi);
     color: var(--text-lo);
     font-size: var(--f-m);
-    font-weight: 300;
+    font-weight: 700;
     cursor: pointer;
     flex-shrink: 0;
     transition:
@@ -219,7 +214,7 @@ button {
     font-weight: 400;
     padding: 0 var(--gap-s);
     border: 1px solid var(--border);
-    background: var(--surface);
+    background: var(--bg-hi);
     color: var(--text);
     border-radius: var(--r);
     transition:
@@ -229,12 +224,15 @@ button {
 }
 
 select option {
-    background: var(--surface);
+    background: var(--bg-hi);
 }
 
 #timeSignature {
-    width: 100%;
     cursor: pointer;
+    font-weight: 700;
+    font-size: var(--f-l);
+    color: var(--text);
+    aspect-ratio: 1.5/1;
 }
 
 select:focus,
@@ -244,16 +242,20 @@ button:focus {
 }
 
 button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    min-width: clamp(3.5rem, 7vw, 5rem);
+    font-weight: 700;
+    aspect-ratio: 1/1;
 }
 
-button.active {
-    background: var(--text);
-    color: var(--bg);
-    border-color: var(--text);
+button img {
+    width: clamp(0.9rem, 2.2vw, 1.25rem);
+    height: clamp(0.9rem, 2.2vw, 1.25rem);
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
 }
 
 /* ── Sequencer ── */
@@ -307,22 +309,27 @@ button.active {
     min-width: 0;
     padding: 0 var(--gap-xs);
     font-size: var(--f-xs);
-    font-weight: 400;
+    font-weight: 700;
     letter-spacing: 0.04em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     border: 1px solid var(--border);
-    border-left: 2px solid var(--border-hi);
+    border-left: 4px solid var(--border-hi);
     border-radius: var(--r);
-    background: var(--surface);
-    color: var(--text-lo);
-    cursor: pointer;
+    background: var(--bg-hi);
+    color: var(--text);
+    cursor: ew-resize;
     line-height: 1;
     transition:
         background var(--transition),
         color var(--transition),
         border-color var(--transition);
+}
+
+.name-btn img {
+    width: clamp(1rem, 2.5vw, 1.4rem);
+    height: clamp(1rem, 2.5vw, 1.4rem);
 }
 
 /* Checkboxes */
@@ -333,12 +340,13 @@ button.active {
     width: 100%;
     height: 100%;
     border: 1px solid var(--border);
-    cursor: pointer;
+    cursor: cell;
     border-radius: var(--r);
     background: var(--surface);
     transition:
         background var(--transition),
-        border-color var(--transition);
+        border-color var(--transition),
+        box-shadow 0.35s ease;
     padding: 0;
     margin: 0;
 }
@@ -377,6 +385,23 @@ button.active {
     opacity: 0.35;
 }
 
+#sequencer input[type="checkbox"].col-active {
+    transition:
+        background 0s,
+        border-color 0s,
+        box-shadow 0s;
+}
+
+#sequencer input[type="checkbox"].col-active:not(:checked) {
+    border-color: var(--border-hi);
+    background: color-mix(in srgb, var(--text-hi) 8%, var(--surface));
+    box-shadow: 0 0 6px color-mix(in srgb, var(--text-hi) 20%, transparent);
+}
+
+#sequencer input[type="checkbox"].col-active:checked {
+    box-shadow: 0 0 8px color-mix(in srgb, var(--text-hi) 50%, transparent);
+}
+
 /* ── Footer ── */
 
 footer {
@@ -387,31 +412,32 @@ footer {
     justify-content: space-between;
     align-items: center;
     gap: var(--gap);
-    color: var(--text-lo);
+    color: var(--text);
+}
+
+footer p {
+    opacity: 0.6;
 }
 
 footer a {
     color: inherit;
     text-decoration: underline;
     text-underline-offset: 3px;
-    transition: color var(--transition);
 }
 
 .volume {
     display: flex;
     align-items: center;
-    background: var(--surface);
+    background: var(--bg-hi);
     border: 1px solid var(--border);
     border-radius: var(--r);
     padding: var(--gap-s);
+    gap: var(--gap-s);
 }
 
-.volume label {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--gap-s);
-    min-width: auto;
-    color: var(--text-lo);
+.volume img {
+    width: clamp(0.8rem, 1.8vw, 1rem);
+    height: clamp(0.8rem, 1.8vw, 1rem);
 }
 
 #volume {

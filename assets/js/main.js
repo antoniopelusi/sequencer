@@ -22,6 +22,7 @@ function initAudio() {
 }
 
 const buffers = {};
+const rawBuffers = {};
 
 const sequencer = document.getElementById("sequencer");
 const controls = document.getElementById("controls");
@@ -38,16 +39,27 @@ const volumeSlider = document.getElementById("volume");
 let activeSteps = 16;
 let currentStep = 0;
 let timer = null;
+let audioReady = false;
 
-async function load(url) {
-  const response = await fetch(url);
-  const arrayBuffer = await response.arrayBuffer();
-  return ctx.decodeAudioData(arrayBuffer);
+async function fetchAll() {
+  for (const key in audioFiles) {
+    const response = await fetch(audioFiles[key]);
+    rawBuffers[key] = await response.arrayBuffer();
+  }
 }
 
-async function preload() {
-  for (const key in audioFiles) {
-    buffers[key] = await load(audioFiles[key]);
+async function decodeAll() {
+  for (const key in rawBuffers) {
+    buffers[key] = await ctx.decodeAudioData(rawBuffers[key]);
+  }
+}
+
+async function ensureAudio() {
+  initAudio();
+  if (ctx.state === "suspended") await ctx.resume();
+  if (!audioReady) {
+    await decodeAll();
+    audioReady = true;
   }
 }
 
@@ -59,15 +71,21 @@ function play(name) {
 }
 
 function syncBPM() {
+  const bpmInput = document.getElementById("bpm");
+
   function setBPM(value) {
     const v = Math.min(240, Math.max(40, value));
-    bpmInput.value = v;
+    bpmInput.textContent = v;
     bpmSlider.value = v;
   }
 
   bpmSlider.addEventListener("input", () => setBPM(Number(bpmSlider.value)));
-  bpmDown.addEventListener("click", () => setBPM(Number(bpmInput.value) - 1));
-  bpmUp.addEventListener("click", () => setBPM(Number(bpmInput.value) + 1));
+  bpmDown.addEventListener("click", () =>
+    setBPM(Number(bpmInput.textContent) - 1),
+  );
+  bpmUp.addEventListener("click", () =>
+    setBPM(Number(bpmInput.textContent) + 1),
+  );
 }
 
 function syncVolume() {
@@ -80,10 +98,19 @@ function highlight(stepIndex) {
   beatBar
     .querySelectorAll(".active")
     .forEach((el) => el.classList.remove("active"));
+  sequencer
+    .querySelectorAll('input[type="checkbox"].col-active')
+    .forEach((el) => el.classList.remove("col-active"));
+
   if (stepIndex >= 0) {
     beatBar
       .querySelector(`[data-step="${stepIndex}"]`)
       ?.classList.add("active");
+    sequencer
+      .querySelectorAll(
+        `input[type="checkbox"][data-step="${stepIndex}"]:not(:disabled)`,
+      )
+      .forEach((el) => el.classList.add("col-active"));
   }
 }
 
@@ -107,6 +134,14 @@ function updateActiveSteps() {
 }
 
 function clearAll() {
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+    playBtn.textContent = "Play";
+    playBtn.classList.remove("active");
+    playBtn.innerHTML = '<img src="./assets/icons/play.svg" alt="Play" />';
+    highlight(-1);
+  }
   sequencer
     .querySelectorAll('input[type="checkbox"]:not(:disabled)')
     .forEach((cb) => {
@@ -116,20 +151,38 @@ function clearAll() {
 
 function initNameButtons() {
   sequencer.querySelectorAll(".name-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const row = btn.closest(".row");
       const activeBoxes = [
         ...row.querySelectorAll('input[type="checkbox"]:not(:disabled)'),
       ];
       const allChecked =
         activeBoxes.length > 0 && activeBoxes.every((cb) => cb.checked);
+
+      if (!allChecked) {
+        await ensureAudio();
+        const instrument = row.querySelector('input[type="checkbox"]')?.dataset
+          .instrument;
+        if (instrument && buffers[instrument]) play(instrument);
+      }
+
       activeBoxes.forEach((cb) => (cb.checked = !allChecked));
     });
   });
 }
 
+function initCheckboxPreview() {
+  sequencer.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+    cb.addEventListener("change", async () => {
+      if (!cb.checked) return;
+      await ensureAudio();
+      if (buffers[cb.dataset.instrument]) play(cb.dataset.instrument);
+    });
+  });
+}
+
 function tick() {
-  const duration = (60 / bpmInput.value / 2) * 1000;
+  const duration = (60 / Number(bpmInput.textContent) / 2) * 1000;
 
   highlight(currentStep);
 
@@ -142,22 +195,15 @@ function tick() {
   timer = setTimeout(tick, duration);
 }
 
-let audioReady = false;
-
 async function toggle() {
-  initAudio();
-  if (ctx.state === "suspended") await ctx.resume();
-
-  if (!audioReady) {
-    await preload();
-    audioReady = true;
-  }
+  await ensureAudio();
 
   if (timer) {
     clearTimeout(timer);
     timer = null;
     playBtn.textContent = "Play";
     playBtn.classList.remove("active");
+    playBtn.innerHTML = '<img src="./assets/icons/play.svg" alt="Play" />';
     highlight(-1);
     return;
   }
@@ -166,6 +212,7 @@ async function toggle() {
   tick();
   playBtn.textContent = "Pause";
   playBtn.classList.add("active");
+  playBtn.innerHTML = '<img src="./assets/icons/pause.svg" alt="Pause" />';
 }
 
 playBtn.addEventListener("click", toggle);
@@ -177,6 +224,7 @@ timeSelect.addEventListener("change", () => {
     timer = null;
     playBtn.textContent = "Play";
     playBtn.classList.remove("active");
+    playBtn.innerHTML = '<img src="./assets/icons/play.svg" alt="Play" />';
   }
   updateActiveSteps();
 });
@@ -189,8 +237,10 @@ window.addEventListener("keydown", (e) => {
 });
 
 window.addEventListener("load", async () => {
+  fetchAll();
   updateActiveSteps();
   initNameButtons();
+  initCheckboxPreview();
   syncBPM();
   syncVolume();
 

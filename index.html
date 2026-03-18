@@ -34,28 +34,18 @@
     <body>
         <main role="main">
             <div id="controls" class="hidden">
-                <label>
-                    Time Signature
-                    <select id="timeSignature">
-                        <option value="3">3/4</option>
-                        <option value="4" selected>4/4</option>
-                        <option value="5">5/4</option>
-                    </select>
-                </label>
+                <select id="timeSignature">
+                    <option value="3">3/4</option>
+                    <option value="4" selected>4/4</option>
+                    <option value="5">5/4</option>
+                </select>
                 <div class="label">
-                    <span>BPM</span>
                     <div class="bpm-controls">
                         <button id="bpmDown" class="bpm-step" tabindex="-1">
                             −
                         </button>
-                        <input
-                            id="bpm"
-                            type="number"
-                            value="110"
-                            min="40"
-                            max="240"
-                            readonly
-                        />
+                        <span id="bpm">110</span>
+                        <span class="bpm-unit">BPM</span>
                         <button id="bpmUp" class="bpm-step" tabindex="-1">
                             +
                         </button>
@@ -69,8 +59,12 @@
                     </div>
                 </div>
                 <div class="button-group">
-                    <button id="clear">Clear</button>
-                    <button id="play">Play</button>
+                    <button id="clear">
+                        <img src="./assets/icons/reset.svg" alt="Reset" />
+                    </button>
+                    <button id="play">
+                        <img src="./assets/icons/play.svg" alt="Play" />
+                    </button>
                 </div>
             </div>
 
@@ -100,7 +94,9 @@
                 </div>
 
                 <div class="row" data-instrument="kick">
-                    <button class="name-btn">Kick</button>
+                    <button class="name-btn">
+                        <img src="./assets/icons/kick.svg" alt="Kick" />
+                    </button>
                     <input
                         type="checkbox"
                         data-instrument="kick"
@@ -209,7 +205,9 @@
                 </div>
 
                 <div class="row" data-instrument="snare">
-                    <button class="name-btn">Snare</button>
+                    <button class="name-btn">
+                        <img src="./assets/icons/snare.svg" alt="Snare" />
+                    </button>
                     <input
                         type="checkbox"
                         data-instrument="snare"
@@ -318,7 +316,9 @@
                 </div>
 
                 <div class="row" data-instrument="hihat">
-                    <button class="name-btn">Hi-Hat</button>
+                    <button class="name-btn">
+                        <img src="./assets/icons/hihat.svg" alt="Hi-Hat" />
+                    </button>
                     <input
                         type="checkbox"
                         data-instrument="hihat"
@@ -427,7 +427,12 @@
                 </div>
 
                 <div class="row" data-instrument="hihat foot">
-                    <button class="name-btn">HH Foot</button>
+                    <button class="name-btn">
+                        <img
+                            src="./assets/icons/hhfoot.svg"
+                            alt="Hi-hat foot"
+                        />
+                    </button>
                     <input
                         type="checkbox"
                         data-instrument="hihat foot"
@@ -536,7 +541,9 @@
                 </div>
 
                 <div class="row" data-instrument="tom">
-                    <button class="name-btn">Tom</button>
+                    <button class="name-btn">
+                        <img src="./assets/icons/tom.svg" alt="Tom" />
+                    </button>
                     <input
                         type="checkbox"
                         data-instrument="tom"
@@ -645,7 +652,9 @@
                 </div>
 
                 <div class="row" data-instrument="floor tom">
-                    <button class="name-btn">Fl. Tom</button>
+                    <button class="name-btn">
+                        <img src="./assets/icons/fltom.svg" alt="Floor tom" />
+                    </button>
                     <input
                         type="checkbox"
                         data-instrument="floor tom"
@@ -754,7 +763,9 @@
                 </div>
 
                 <div class="row" data-instrument="ride">
-                    <button class="name-btn">Ride</button>
+                    <button class="name-btn">
+                        <img src="./assets/icons/ride.svg" alt="ride" />
+                    </button>
                     <input
                         type="checkbox"
                         data-instrument="ride"
@@ -863,7 +874,9 @@
                 </div>
 
                 <div class="row" data-instrument="perc">
-                    <button class="name-btn">Perc</button>
+                    <button class="name-btn">
+                        <img src="./assets/icons/perc.svg" alt="perc" />
+                    </button>
                     <input
                         type="checkbox"
                         data-instrument="perc"
@@ -975,17 +988,15 @@
             <footer>
                 <p>© <a href="/">Antonio Pelusi</a>. All rights reserved.</p>
                 <div class="volume">
-                    <label for="volume">
-                        Vol
-                        <input
-                            id="volume"
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
-                            value="0.8"
-                        />
-                    </label>
+                    <img src="./assets/icons/volume.svg" alt="Volume" />
+                    <input
+                        id="volume"
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value="0.8"
+                    />
                 </div>
             </footer>
         </main>
